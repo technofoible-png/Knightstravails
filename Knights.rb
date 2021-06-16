@@ -1,8 +1,8 @@
 class Knight
   attr_accessor :current_pos, :possible_moves, :all_moves
 
-  def initialize (num1, num2)
-    @current_pos = Position.new(num1, num2)
+  def initialize (list)
+    @current_pos = Position.new(list[0], list[1])
     @possible_moves = []
     
     @all_moves = [
@@ -41,9 +41,13 @@ class Position
 end
 
 
-test = Knight.new(0, 0)
 
+# Script that does what this project is trying to do
 
-test.get_valid_moves
+def knight_route(list1, list2)
+  # make a Knight from the first list
+  # make a Knight from the second list
 
-puts test.possible_moves
+  # check if Knight_1 == Knight_2?
+
+end
