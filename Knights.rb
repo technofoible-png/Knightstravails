@@ -1,53 +1,54 @@
 class Knight
-  attr_accessor :current_pos, :possible_moves, :all_moves
+  attr_accessor :current, :moves, :parent
 
-  def initialize (list)
-    @current_pos = Position.new(list[0], list[1])
-    @possible_moves = []
-    
-    @all_moves = [
-      Position.new(current_pos.x - 2, current_pos.y + 1),
-      Position.new(current_pos.x - 1, current_pos.y + 2),
-      Position.new(current_pos.x - 2, current_pos.y - 1),
-      Position.new(current_pos.x - 1, current_pos.y - 2),
-      Position.new(current_pos.x + 2, current_pos.y + 1),
-      Position.new(current_pos.x + 1, current_pos.y + 2),
-      Position.new(current_pos.x + 2, current_pos.y - 1),
-      Position.new(current_pos.x + 1, current_pos.y - 2)
+  def initialize (current, parent = nil)
+    @current = current
+    @parent = parent
+    @moves = []
+  end
+
+  def make_children
+    moves = []
+    transformations = [
+      [-2, 1], [-1, 2], [-2, -1], [-1, -2], [2, 1], [1, 2], [2, -1], [1, -2]
     ]
-  end
-
-  def get_valid_moves
-    all_moves.each do |next_pos|
-      if next_pos.valid_move?
-        @possible_moves.append(next_pos)
-      end
+    transformations.each do |move|
+      x = current[0] + move[0]
+      y = current[1] + move [1]
+      @moves << Knight.new([x, y], self) if x.between?(0, 7) && y.between?(0, 7)
     end
-  end
-
-end
-
-class Position
-  attr_accessor :x, :y
-
-  def initialize (num1, num2)
-    @x = num1
-    @y = num2
-  end
-
-  def valid_move?
-    @x.between?(0, 8) && @y.between?(0, 8)
+    @moves
   end
 end
+# ------------------------------
 
-
-
-# Script that does what this project is trying to do
-
-def knight_route(list1, list2)
-  # make a Knight from the first list
-  # make a Knight from the second list
-
-  # check if Knight_1 == Knight_2?
-
+def knight_route(start_pos, end_pos)
+  start = Knight.new(start_pos)
+  final = search_moves(start, end_pos)
+  route = get_parents(final)
+  route
 end
+
+def search_moves(start, target)
+  queue = []
+  current_node = start
+  until current_node.current == target
+    current_node.make_children
+    current_node.moves.each { |child| queue.push(child) }
+    current_node = queue.shift
+  end 
+  return current_node
+end
+
+def get_parents(final)
+  list = [final.current]
+  current_node = final
+  until current_node.parent == nil
+    list.unshift(current_node.parent.current)
+    current_node = current_node.parent
+  end
+  list
+end
+# ------------------------------
+
+p knight_route([1,2], [0,7])
